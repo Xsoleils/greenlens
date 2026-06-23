@@ -3,7 +3,32 @@ import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
 import { useAuth } from "./AuthContext";
 import { getTakmaAd } from "./takmaAdlar";
-import { getIsimStili } from "./magazaData";
+import { getIsimStili, getFrameStil, itemBul } from "./magazaData";
+
+function LiderAvatar({ user, size = 38 }) {
+  const giyili   = user.giyili_itemlar || {};
+  const sapka    = itemBul(giyili.sapka);
+  const kiyafet  = itemBul(giyili.kiyafet);
+  const aks      = itemBul(giyili.aksesuar);
+  const frameStil = getFrameStil(giyili);
+  const initials  = getInitials(user.displayName);
+  const bg        = getAvatarRenk(user.displayName);
+
+  return (
+    <div className="lider-avatar-grup" style={{ width: size, height: size }}>
+      {sapka && <div className="lider-sapka-mini">{sapka.emoji}</div>}
+      {frameStil ? (
+        <div className="lider-cerceve-wrap" style={frameStil}>
+          <div className="lider-avatar lider-avatar-sm" style={{ background: bg }}>{initials}</div>
+        </div>
+      ) : (
+        <div className="lider-avatar" style={{ background: bg, width: size, height: size }}>{initials}</div>
+      )}
+      {aks && <div className="lider-aks-mini">{aks.emoji}</div>}
+      {kiyafet && <div className="lider-kiyafet-mini">{kiyafet.emoji}</div>}
+    </div>
+  );
+}
 
 const BIREYSEL_SEKMELER = [
   { key: "mahalle", label: "Mahalle" },
@@ -268,16 +293,14 @@ export default function Liderboard() {
             <div className="lider-bos">Bu alanda henüz kullanıcı yok.</div>
           )}
           {!yukleniyor && !hata && liste.map(user => {
-            const ben = user.id === kullanici?.uid;
-            const initials   = getInitials(user.displayName);
-            const avatarRenk = getAvatarRenk(user.displayName);
+            const ben        = user.id === kullanici?.uid;
             const siraClass  = user.sira === 1 ? "altin" : user.sira === 2 ? "gumus" : user.sira === 3 ? "bronz" : "";
             const siraGoster = user.sira === 1 ? "🥇" : user.sira === 2 ? "🥈" : user.sira === 3 ? "🥉" : user.sira;
             const isimStil   = getIsimStili(user.giyili_itemlar);
             return (
               <div key={user.id} className={`lider-satir ${ben ? "ben" : ""}`}>
                 <div className={`lider-sira ${siraClass}`}>{siraGoster}</div>
-                <div className="lider-avatar" style={{ background: avatarRenk }}>{initials}</div>
+                <LiderAvatar user={user} size={38} />
                 <div className="lider-bilgi">
                   <div className="lider-isim">
                     <span style={isimStil}>{user.displayName}</span>

@@ -4,10 +4,10 @@ import {
   ITEMLAR, BOOSTLAR, SLOT_ETIKETLER,
   itemBul, aktifBoost, boostKalanSure,
   itemSatinAl, itemGiy, itemCikar, boostSatinAl,
-  getIsimStili,
+  getIsimStili, getFrameStil,
 } from "./magazaData";
 
-const SLOTLAR = ["sapka", "kiyafet", "aksesuar"];
+const SLOTLAR = ["sapka", "kiyafet", "aksesuar", "cerceve"];
 const SLOT_TABS = [
   ...SLOTLAR.map(s => ({ key: s, label: SLOT_ETIKETLER[s] })),
   { key: "isim", label: "İsim" },
@@ -25,14 +25,24 @@ function KarakterOnizleme() {
     const p = isim.trim().split(/\s+/);
     return p.length >= 2 ? (p[0][0] + p[p.length - 1][0]).toUpperCase() : p[0].slice(0, 2).toUpperCase();
   })();
-  const isimStil = getIsimStili(giyili);
+  const isimStil  = getIsimStili(giyili);
+  const frameStil = getFrameStil(giyili);
 
   return (
     <div className="karakter-onizleme">
       <div className="karakter-sapka-slot">{sapka ? sapka.emoji : <span className="karakter-bos-slot">·</span>}</div>
       <div className="karakter-avatar-wrap">
-        <div className="karakter-avatar">{initials}</div>
-        {aks && <div className="karakter-aks-badge">{aks.emoji}</div>}
+        {frameStil ? (
+          <div className="karakter-cerceve" style={frameStil}>
+            <div className="karakter-avatar karakter-avatar-sm">{initials}</div>
+            {aks && <div className="karakter-aks-badge">{aks.emoji}</div>}
+          </div>
+        ) : (
+          <>
+            <div className="karakter-avatar">{initials}</div>
+            {aks && <div className="karakter-aks-badge">{aks.emoji}</div>}
+          </>
+        )}
       </div>
       <div className="karakter-kiyafet-slot">{kiyafet ? kiyafet.emoji : <span className="karakter-bos-slot">·</span>}</div>
       <div className="karakter-isim-label">
@@ -52,7 +62,8 @@ function ItemKart({ item, onIslem }) {
   const xp      = profil?.toplamPuan || 0;
   const yeterli = xp >= item.fiyat;
 
-  const isIsimItem = item.slot === "isim_renk" || item.slot === "isim_font";
+  const isIsimItem    = item.slot === "isim_renk" || item.slot === "isim_font";
+  const isCerceveItem = item.slot === "cerceve";
 
   const isimOnizleme = (() => {
     if (item.slot === "isim_renk") {
@@ -93,9 +104,20 @@ function ItemKart({ item, onIslem }) {
 
   return (
     <div className={`magaza-item-kart ${giyili ? "giyili" : ""} ${sahip ? "sahip" : ""}`}>
-      {/* Sol: emoji veya isim renk/font önizlemesi */}
-      {!isIsimItem && (
+      {/* Sol: emoji veya özel önizleme */}
+      {!isIsimItem && !isCerceveItem && (
         <div className="magaza-item-emoji">{item.emoji}</div>
+      )}
+      {isCerceveItem && (
+        <div
+          className="magaza-cerceve-swatch"
+          style={{
+            background: item.gradient || item.renk,
+            boxShadow: item.glow || undefined,
+          }}
+        >
+          <div className="magaza-cerceve-ic" />
+        </div>
       )}
       {item.slot === "isim_renk" && (
         <div

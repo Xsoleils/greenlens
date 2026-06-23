@@ -30,6 +30,13 @@ export const ITEMLAR = [
   { id: "font_kalin",   ad: "Kalın",        fiyat: 150, slot: "isim_font", fontWeight: "900" },
   { id: "font_italik",  ad: "İtalik",       fiyat: 150, slot: "isim_font", fontStyle: "italic" },
   { id: "font_super",   ad: "Kalın İtalik", fiyat: 250, slot: "isim_font", fontWeight: "900", fontStyle: "italic" },
+  // Çerçeveler
+  { id: "cer_altin",  ad: "Altın Çerçeve",    fiyat: 400,  slot: "cerceve", renk: "#f59e0b" },
+  { id: "cer_mor",    ad: "Mor Çerçeve",       fiyat: 350,  slot: "cerceve", renk: "#a855f7" },
+  { id: "cer_neon",   ad: "Neon Çerçeve",      fiyat: 600,  slot: "cerceve", renk: "#22c55e", glow: "0 0 10px #22c55e88" },
+  { id: "cer_ates",   ad: "Ateş Çerçeve",      fiyat: 900,  slot: "cerceve", gradient: "linear-gradient(135deg,#ef4444,#f97316,#eab308)" },
+  { id: "cer_gokusg", ad: "Gökkuşağı Çerçeve", fiyat: 1500, slot: "cerceve", gradient: "linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7)" },
+  { id: "cer_holo",   ad: "Hologram Çerçeve",  fiyat: 3000, slot: "cerceve", gradient: "linear-gradient(135deg,#67e8f9,#a78bfa,#f0abfc,#67e8f9)" },
 ];
 
 export const BOOSTLAR = [
@@ -41,12 +48,22 @@ export const SLOT_ETIKETLER = {
   sapka:     "Şapka",
   kiyafet:   "Kıyafet",
   aksesuar:  "Aksesuar",
+  cerceve:   "Çerçeve",
   isim_renk: "İsim Rengi",
   isim_font: "İsim Yazısı",
 };
 
 export function itemBul(id) {
   return ITEMLAR.find(i => i.id === id) || null;
+}
+
+export function getFrameStil(giyiliItemlar) {
+  const item = itemBul(giyiliItemlar?.cerceve);
+  if (!item) return null;
+  return {
+    background: item.gradient || item.renk,
+    boxShadow:  item.glow || undefined,
+  };
 }
 
 export function getIsimStili(giyiliItemlar) {
