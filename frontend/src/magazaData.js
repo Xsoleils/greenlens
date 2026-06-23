@@ -17,6 +17,19 @@ export const ITEMLAR = [
   { id: "aks_geri",   emoji: "♻️", ad: "Geri Dönüşüm",   fiyat: 100,  slot: "aksesuar" },
   { id: "aks_dunya",  emoji: "🌍", ad: "Dünya Koruyucu",  fiyat: 800,  slot: "aksesuar" },
   { id: "aks_enrj",   emoji: "⚡", ad: "Enerji Aurası",   fiyat: 600,  slot: "aksesuar" },
+  // İsim Renkleri
+  { id: "renk_kirmizi", ad: "Kırmızı",   fiyat: 250,  slot: "isim_renk", renk: "#ef4444" },
+  { id: "renk_mavi",    ad: "Mavi",       fiyat: 250,  slot: "isim_renk", renk: "#3b82f6" },
+  { id: "renk_mor",     ad: "Mor",        fiyat: 300,  slot: "isim_renk", renk: "#a855f7" },
+  { id: "renk_turuncu", ad: "Turuncu",    fiyat: 300,  slot: "isim_renk", renk: "#f97316" },
+  { id: "renk_pembe",   ad: "Pembe",      fiyat: 350,  slot: "isim_renk", renk: "#ec4899" },
+  { id: "renk_altin",   ad: "Altın",      fiyat: 700,  slot: "isim_renk", gradient: "linear-gradient(90deg,#f59e0b,#fcd34d,#f59e0b)" },
+  { id: "renk_gokusg",  ad: "Gökkuşağı",  fiyat: 1500, slot: "isim_renk", gradient: "linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7)" },
+  { id: "renk_holo",    ad: "Hologram",   fiyat: 3000, slot: "isim_renk", gradient: "linear-gradient(90deg,#67e8f9,#a78bfa,#f0abfc,#67e8f9)" },
+  // İsim Yazı Tipi
+  { id: "font_kalin",   ad: "Kalın",        fiyat: 150, slot: "isim_font", fontWeight: "900" },
+  { id: "font_italik",  ad: "İtalik",       fiyat: 150, slot: "isim_font", fontStyle: "italic" },
+  { id: "font_super",   ad: "Kalın İtalik", fiyat: 250, slot: "isim_font", fontWeight: "900", fontStyle: "italic" },
 ];
 
 export const BOOSTLAR = [
@@ -25,13 +38,32 @@ export const BOOSTLAR = [
 ];
 
 export const SLOT_ETIKETLER = {
-  sapka:    "Şapka",
-  kiyafet:  "Kıyafet",
-  aksesuar: "Aksesuar",
+  sapka:     "Şapka",
+  kiyafet:   "Kıyafet",
+  aksesuar:  "Aksesuar",
+  isim_renk: "İsim Rengi",
+  isim_font: "İsim Yazısı",
 };
 
 export function itemBul(id) {
   return ITEMLAR.find(i => i.id === id) || null;
+}
+
+export function getIsimStili(giyiliItemlar) {
+  const renkItem = itemBul(giyiliItemlar?.isim_renk);
+  const fontItem = itemBul(giyiliItemlar?.isim_font);
+  const style = {};
+  if (renkItem?.gradient) {
+    style.background           = renkItem.gradient;
+    style.WebkitBackgroundClip = "text";
+    style.WebkitTextFillColor  = "transparent";
+    style.backgroundClip       = "text";
+  } else if (renkItem?.renk) {
+    style.color = renkItem.renk;
+  }
+  if (fontItem?.fontWeight) style.fontWeight = fontItem.fontWeight;
+  if (fontItem?.fontStyle)  style.fontStyle  = fontItem.fontStyle;
+  return style;
 }
 
 export function aktifBoost(profil) {

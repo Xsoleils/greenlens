@@ -3,6 +3,7 @@ import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
 import { useAuth } from "./AuthContext";
 import { getTakmaAd } from "./takmaAdlar";
+import { getIsimStili } from "./magazaData";
 
 const BIREYSEL_SEKMELER = [
   { key: "mahalle", label: "Mahalle" },
@@ -272,13 +273,14 @@ export default function Liderboard() {
             const avatarRenk = getAvatarRenk(user.displayName);
             const siraClass  = user.sira === 1 ? "altin" : user.sira === 2 ? "gumus" : user.sira === 3 ? "bronz" : "";
             const siraGoster = user.sira === 1 ? "🥇" : user.sira === 2 ? "🥈" : user.sira === 3 ? "🥉" : user.sira;
+            const isimStil   = getIsimStili(user.giyili_itemlar);
             return (
               <div key={user.id} className={`lider-satir ${ben ? "ben" : ""}`}>
                 <div className={`lider-sira ${siraClass}`}>{siraGoster}</div>
                 <div className="lider-avatar" style={{ background: avatarRenk }}>{initials}</div>
                 <div className="lider-bilgi">
                   <div className="lider-isim">
-                    {user.displayName}
+                    <span style={isimStil}>{user.displayName}</span>
                     {ben && <span className="sen-etiketi">Sen</span>}
                   </div>
                   <div className="lider-alt">

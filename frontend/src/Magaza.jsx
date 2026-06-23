@@ -4,14 +4,19 @@ import {
   ITEMLAR, BOOSTLAR, SLOT_ETIKETLER,
   itemBul, aktifBoost, boostKalanSure,
   itemSatinAl, itemGiy, itemCikar, boostSatinAl,
+  getIsimStili,
 } from "./magazaData";
 
 const SLOTLAR = ["sapka", "kiyafet", "aksesuar"];
-const SLOT_TABS = [...SLOTLAR.map(s => ({ key: s, label: SLOT_ETIKETLER[s] })), { key: "boost", label: "Boost" }];
+const SLOT_TABS = [
+  ...SLOTLAR.map(s => ({ key: s, label: SLOT_ETIKETLER[s] })),
+  { key: "isim", label: "İsim" },
+  { key: "boost", label: "Boost" },
+];
 
 function KarakterOnizleme() {
   const { profil } = useAuth();
-  const giyili = profil?.giyili_itemlar || {};
+  const giyili  = profil?.giyili_itemlar || {};
   const sapka   = itemBul(giyili.sapka);
   const kiyafet = itemBul(giyili.kiyafet);
   const aks     = itemBul(giyili.aksesuar);
@@ -20,6 +25,7 @@ function KarakterOnizleme() {
     const p = isim.trim().split(/\s+/);
     return p.length >= 2 ? (p[0][0] + p[p.length - 1][0]).toUpperCase() : p[0].slice(0, 2).toUpperCase();
   })();
+  const isimStil = getIsimStili(giyili);
 
   return (
     <div className="karakter-onizleme">
@@ -29,6 +35,9 @@ function KarakterOnizleme() {
         {aks && <div className="karakter-aks-badge">{aks.emoji}</div>}
       </div>
       <div className="karakter-kiyafet-slot">{kiyafet ? kiyafet.emoji : <span className="karakter-bos-slot">·</span>}</div>
+      <div className="karakter-isim-label">
+        <span style={isimStil}>{isim}</span>
+      </div>
     </div>
   );
 }
@@ -42,6 +51,27 @@ function ItemKart({ item, onIslem }) {
   const giyili  = profil?.giyili_itemlar?.[item.slot] === item.id;
   const xp      = profil?.toplamPuan || 0;
   const yeterli = xp >= item.fiyat;
+
+  const isIsimItem = item.slot === "isim_renk" || item.slot === "isim_font";
+
+  const isimOnizleme = (() => {
+    if (item.slot === "isim_renk") {
+      if (item.gradient) return {
+        background: item.gradient,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+      };
+      return { color: item.renk };
+    }
+    if (item.slot === "isim_font") {
+      const s = {};
+      if (item.fontWeight) s.fontWeight = item.fontWeight;
+      if (item.fontStyle)  s.fontStyle  = item.fontStyle;
+      return s;
+    }
+    return {};
+  })();
 
   const tikla = async () => {
     setHata(""); setYukleniyor(true);
@@ -63,11 +93,26 @@ function ItemKart({ item, onIslem }) {
 
   return (
     <div className={`magaza-item-kart ${giyili ? "giyili" : ""} ${sahip ? "sahip" : ""}`}>
-      <div className="magaza-item-emoji">{item.emoji}</div>
-      <div className="magaza-item-ad">{item.ad}</div>
+      {/* Sol: emoji veya isim renk/font önizlemesi */}
+      {!isIsimItem && (
+        <div className="magaza-item-emoji">{item.emoji}</div>
+      )}
+      {item.slot === "isim_renk" && (
+        <div
+          className="magaza-renk-swatch"
+          style={item.gradient ? { background: item.gradient } : { background: item.renk }}
+        />
+      )}
+      {item.slot === "isim_font" && (
+        <div className="magaza-font-swatch" style={isimOnizleme}>Aa</div>
+      )}
+
+      <div className="magaza-item-ad">
+        <span style={isimOnizleme}>{item.ad}</span>
+      </div>
       <div className="magaza-item-alt">
         {!sahip && <span className="magaza-item-fiyat">{item.fiyat} XP</span>}
-        {sahip && <span className="magaza-item-sahip">{giyili ? "Giyili ✓" : "Sahipsin"}</span>}
+        {sahip && <span className="magaza-item-sahip">{giyili ? "Aktif ✓" : "Sahipsin"}</span>}
       </div>
       {hata && <div className="magaza-item-hata">{hata}</div>}
       <button
@@ -75,7 +120,7 @@ function ItemKart({ item, onIslem }) {
         onClick={tikla}
         disabled={yukleniyor || (!sahip && !yeterli)}
       >
-        {yukleniyor ? "..." : giyili ? "Çıkar" : sahip ? "Giy" : yeterli ? "Satın Al" : "XP Yetersiz"}
+        {yukleniyor ? "..." : giyili ? "Kaldır" : sahip ? "Uygula" : yeterli ? "Satın Al" : "XP Yetersiz"}
       </button>
     </div>
   );
@@ -150,12 +195,13 @@ export default function Magaza({ acik, onKapat }) {
 
         <KarakterOnizleme />
 
-        <div className="lider-sekmeler" style={{ borderBottom: "1px solid var(--sinir)", flexShrink: 0 }}>
+        <div className="lider-sekmeler" style={{ borderBottom: "1px solid var(--sinir)", flexShrink: 0, overflowX: "auto" }}>
           {SLOT_TABS.map(t => (
             <button
               key={t.key}
               className={`sekme-btn ${sekme === t.key ? "aktif" : ""}`}
               onClick={() => setSekme(t.key)}
+              style={{ flexShrink: 0 }}
             >
               {t.label}
             </button>
@@ -163,7 +209,19 @@ export default function Magaza({ acik, onKapat }) {
         </div>
 
         <div className="magaza-liste">
-          {sekme !== "boost" && slotItemlari.map(item => (
+          {sekme === "isim" && (
+            <>
+              <div className="magaza-kategori-baslik">İsim Rengi</div>
+              {ITEMLAR.filter(i => i.slot === "isim_renk").map(item => (
+                <ItemKart key={item.id} item={item} />
+              ))}
+              <div className="magaza-kategori-baslik" style={{ marginTop: "0.5rem" }}>İsim Yazı Tipi</div>
+              {ITEMLAR.filter(i => i.slot === "isim_font").map(item => (
+                <ItemKart key={item.id} item={item} />
+              ))}
+            </>
+          )}
+          {sekme !== "boost" && sekme !== "isim" && slotItemlari.map(item => (
             <ItemKart key={item.id} item={item} />
           ))}
           {sekme === "boost" && BOOSTLAR.map(b => (
