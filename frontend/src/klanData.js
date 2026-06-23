@@ -10,13 +10,11 @@ function buHafta() {
 const buAy = () => new Date().toISOString().slice(0, 7);
 
 export const KLAN_HAFTALIK = [
-  { id: "kh1", baslik: "Klan Tarama Fırtınası", aciklama: "50 atık tara",      hedef: 50,  xp: 0,    sayac: "tarama"      },
-  { id: "kh2", baslik: "Klan Video Şampiyonu",  aciklama: "10 doğru video at", hedef: 10,  xp: 1500, sayac: "video_dogru" },
+  { id: "kh2", baslik: "Klan Video Şampiyonu", aciklama: "10 doğru video at", hedef: 10, xp: 1500, sayac: "video_dogru" },
 ];
 
 export const KLAN_AYLIK = [
-  { id: "ka1", baslik: "Klan Aylık Maratonu",  aciklama: "200 atık tara",      hedef: 200, xp: 0,    sayac: "tarama"      },
-  { id: "ka2", baslik: "Klan Video Efsanesi",  aciklama: "40 doğru video at",  hedef: 40,  xp: 8000, sayac: "video_dogru" },
+  { id: "ka2", baslik: "Klan Video Efsanesi",  aciklama: "40 doğru video at", hedef: 40, xp: 8000, sayac: "video_dogru" },
 ];
 
 function taze(mevcut, donemKey, buDonem) {

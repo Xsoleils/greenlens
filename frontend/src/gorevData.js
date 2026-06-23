@@ -13,18 +13,15 @@ function buHafta() {
 }
 
 export const GUNLUK_GOREVLER = [
-  { id: "g1", baslik: "Günlük Tarama",  aciklama: "3 atık tara",          hedef: 3,  xp: 0,    sayac: "tarama"      },
-  { id: "g2", baslik: "Video Ustası",   aciklama: "1 video doğru atma",   hedef: 1,  xp: 100,  sayac: "video_dogru" },
+  { id: "g2", baslik: "Video Ustası",  aciklama: "1 video doğru atma",  hedef: 1,  xp: 100,  sayac: "video_dogru" },
 ];
 
 export const HAFTALIK_GOREVLER = [
-  { id: "h1", baslik: "Haftalık Çevreci", aciklama: "20 atık tara",        hedef: 20, xp: 0,   sayac: "tarama"      },
-  { id: "h2", baslik: "Video Serisi",     aciklama: "5 doğru video atma",  hedef: 5,  xp: 500, sayac: "video_dogru" },
+  { id: "h2", baslik: "Video Serisi",  aciklama: "5 doğru video atma",  hedef: 5,  xp: 500,  sayac: "video_dogru" },
 ];
 
 export const AYLIK_GOREVLER = [
-  { id: "a1", baslik: "Aylık Kahraman",  aciklama: "80 atık tara",         hedef: 80, xp: 0,    sayac: "tarama"      },
-  { id: "a2", baslik: "Aylık Efsane",    aciklama: "20 doğru video atma",  hedef: 20, xp: 2000, sayac: "video_dogru" },
+  { id: "a2", baslik: "Aylık Efsane", aciklama: "20 doğru video atma", hedef: 20, xp: 2000, sayac: "video_dogru" },
 ];
 
 function taze(mevcut, donemKey, buDonem) {
