@@ -30,7 +30,7 @@ function GorevKart({ gorev, ilerleme }) {
           <div className="gorev-aciklama">{gorev.aciklama}</div>
         </div>
         <div className={`gorev-xp-chip ${tamamlandi ? "kazanildi" : ""}`}>
-          {tamamlandi ? "✓" : `+${gorev.xp} XP`}
+          {tamamlandi ? "✓" : ""}
         </div>
       </div>
       {!tamamlandi && (
@@ -58,18 +58,13 @@ export default function Gorevler() {
   };
   const { gorevler, ilerleme } = harita[sekme];
   const tamamSayisi = gorevler.filter(g => ilerleme?.bitis?.includes(g.id)).length;
-  const toplamXP    = gorevler.reduce((s, g) => s + g.xp, 0);
-  const kazanilmisXP = gorevler
-    .filter(g => ilerleme?.bitis?.includes(g.id))
-    .reduce((s, g) => s + g.xp, 0);
-
   return (
     <div className="gorevler-ekran">
 
       <div className="gorevler-baslik-alan">
         <div className="gorevler-baslik">Görevler</div>
         <div className="gorevler-altbaslik">
-          {tamamSayisi}/{gorevler.length} tamamlandı · {kazanilmisXP}/{toplamXP} XP
+          {tamamSayisi}/{gorevler.length} tamamlandı
         </div>
       </div>
 

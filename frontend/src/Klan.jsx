@@ -24,7 +24,7 @@ function KlanGorevKart({ gorev, ilerleme }) {
           <div className="gorev-aciklama">{gorev.aciklama}</div>
         </div>
         <div className={`gorev-xp-chip ${tamamlandi ? "kazanildi" : ""}`}>
-          {tamamlandi ? "✓" : `+${gorev.xp.toLocaleString("tr-TR")} XP`}
+          {tamamlandi ? "✓" : ""}
         </div>
       </div>
       {!tamamlandi && (
